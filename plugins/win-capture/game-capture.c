@@ -466,8 +466,8 @@ static inline void get_config(struct game_capture_config *cfg,
 		obs_data_get_bool(settings, SETTING_PREMULTIPLIED_ALPHA);
 	cfg->limit_framerate =
 		obs_data_get_bool(settings, SETTING_LIMIT_FRAMERATE);
-	cfg->fallback_frame_mult =
-		obs_data_get_int(settings, SETTING_FALLBACK_FRAME_MULT);
+	cfg->fallback_frame_mult = (enum fallback_rate_mult)obs_data_get_int(
+		settings, SETTING_FALLBACK_FRAME_MULT);
 	cfg->capture_overlays =
 		obs_data_get_bool(settings, SETTING_CAPTURE_OVERLAYS);
 	cfg->anticheat_hook =
