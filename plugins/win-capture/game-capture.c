@@ -2460,7 +2460,7 @@ static obs_properties_t *game_capture_properties(void *data)
 				TEXT_LIMIT_FRAMERATE);
 
 	obs_properties_add_int(ppts, SETTING_FALLBACK_FRAME_MULT,
-				TEXT_FALLBACK_FRAME_MULT);
+				TEXT_FALLBACK_FRAME_MULT, 1, 24, 1);
 
 	obs_properties_add_bool(ppts, SETTING_CURSOR, TEXT_CAPTURE_CURSOR);
 
