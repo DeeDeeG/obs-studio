@@ -835,10 +835,13 @@ static inline void reset_frame_interval(struct game_capture *gc)
 		interval =
 			util_mul_div64(ovi.fps_den, 1000000000ULL, ovi.fps_num);
 
-		/* Always limit capture framerate to some extent.  If a game
-		 * running at 900 FPS is being captured without some sort of
-		 * limited capture interval, it will dramatically reduce
-		 * performance. */
+		/* Allow limiting capture framerate to a ratio of the encode
+		 * framerate.  If a game running at 900 FPS is being captured
+		 * without some sort of limited capture interval, it will
+		 * dramatically reduce performance.  However, more frequent
+		 * capturing can better handle uneven frame pacing in the game.
+		 * Allow users to tune the capture rate for a trade-off between
+		 * performance vs frame pacing handling. */
 		interval /= gc->config.fallback_frame_mult;
 	}
 
