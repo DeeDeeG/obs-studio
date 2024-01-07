@@ -69,6 +69,7 @@
 #define TEXT_CAPTURE_CURSOR        obs_module_text("CaptureCursor")
 #define TEXT_LIMIT_FRAMERATE       obs_module_text("GameCapture.LimitFramerate")
 #define TEXT_FRAMERATE_RATIO       obs_module_text("GameCapture.FramerateRatio")
+#define TEXT_FRAMERATE_RATIO_TT    obs_module_text("GameCapture.FramerateRatio.TT")
 #define TEXT_CAPTURE_OVERLAYS      obs_module_text("GameCapture.CaptureOverlays")
 #define TEXT_ANTI_CHEAT_HOOK       obs_module_text("GameCapture.AntiCheatHook")
 #define TEXT_HOOK_RATE             obs_module_text("GameCapture.HookRate")
@@ -2509,8 +2510,9 @@ static obs_properties_t *game_capture_properties(void *data)
 	obs_properties_add_bool(ppts, SETTING_LIMIT_FRAMERATE,
 				TEXT_LIMIT_FRAMERATE);
 
-	obs_properties_add_int(ppts, SETTING_FRAMERATE_RATIO,
+	p = obs_properties_add_int(ppts, SETTING_FRAMERATE_RATIO,
 				TEXT_FRAMERATE_RATIO, 1, 24, 1);
+	obs_property_set_long_description(p, TEXT_FRAMERATE_RATIO_TT);
 
 	obs_properties_add_bool(ppts, SETTING_CURSOR, TEXT_CAPTURE_CURSOR);
 
