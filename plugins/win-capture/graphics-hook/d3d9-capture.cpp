@@ -579,7 +579,7 @@ static void d3d9_capture(IDirect3DDevice9 *device,
 	if (capture_should_init()) {
 		d3d9_init(device);
 	}
-	if (capture_active()) {
+	if (capture_ready()) {
 		if (data.device != device) {
 			d3d9_free();
 			return;
