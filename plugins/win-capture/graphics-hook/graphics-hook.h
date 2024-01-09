@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 #define NUM_BUFFERS 3
-#define HOOK_VERBOSE_LOGGING 0
+#define HOOK_VERBOSE_LOGGING 1
 
 #if HOOK_VERBOSE_LOGGING
 #define hlog_verbose(...) hlog(__VA_ARGS__)
@@ -175,6 +175,8 @@ static inline bool frame_ready(uint64_t interval)
 	uint64_t t;
 
 	if (!interval) {
+		hlog_verbose(
+			"frame_ready: interval not truthy, returning early true!");
 		return true;
 	}
 
@@ -182,9 +184,12 @@ static inline bool frame_ready(uint64_t interval)
 	elapsed = t - last_time;
 
 	if (elapsed < interval) {
+		hlog_verbose(
+			"frame_ready: Not enough time elapsed since last time! Returning early false!");
 		return false;
 	}
 
+	hlog_verbose("frame_ready: Reached the end, updating last_time and returning true!");
 	last_time = (elapsed > interval * 2) ? t : last_time + interval;
 	return true;
 }
