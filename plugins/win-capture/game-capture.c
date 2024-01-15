@@ -29,19 +29,19 @@
 
 /* clang-format off */
 
-#define SETTING_MODE                  "capture_mode"
-#define SETTING_CAPTURE_WINDOW        "window"
-#define SETTING_WINDOW_PRIORITY       "priority"
-#define SETTING_COMPATIBILITY         "sli_compatibility"
-#define SETTING_CURSOR                "capture_cursor"
-#define SETTING_TRANSPARENCY          "allow_transparency"
-#define SETTING_LIMIT_FRAMERATE       "limit_framerate"
-#define SETTING_FRAMERATE_LIMIT_FPS   "framerate_limit_fps"
-#define SETTING_CAPTURE_OVERLAYS      "capture_overlays"
-#define SETTING_ANTI_CHEAT_HOOK       "anti_cheat_hook"
-#define SETTING_HOOK_RATE             "hook_rate"
-#define SETTING_RGBA10A2_SPACE        "rgb10a2_space"
-#define SETTINGS_COMPAT_INFO          "compat_info"
+#define SETTING_MODE                 "capture_mode"
+#define SETTING_CAPTURE_WINDOW       "window"
+#define SETTING_WINDOW_PRIORITY      "priority"
+#define SETTING_COMPATIBILITY        "sli_compatibility"
+#define SETTING_CURSOR               "capture_cursor"
+#define SETTING_TRANSPARENCY         "allow_transparency"
+#define SETTING_LIMIT_FRAMERATE      "limit_framerate"
+#define SETTING_FRAMERATE_LIMIT_FPS  "framerate_limit_fps"
+#define SETTING_CAPTURE_OVERLAYS     "capture_overlays"
+#define SETTING_ANTI_CHEAT_HOOK      "anti_cheat_hook"
+#define SETTING_HOOK_RATE            "hook_rate"
+#define SETTING_RGBA10A2_SPACE       "rgb10a2_space"
+#define SETTINGS_COMPAT_INFO         "compat_info"
 
 /* deprecated */
 #define SETTING_ANY_FULLSCREEN   "capture_any_fullscreen"
@@ -53,31 +53,31 @@
 #define HOTKEY_START             "hotkey_start"
 #define HOTKEY_STOP              "hotkey_stop"
 
-#define TEXT_MODE                     obs_module_text("Mode")
-#define TEXT_GAME_CAPTURE             obs_module_text("GameCapture")
-#define TEXT_ANY_FULLSCREEN           obs_module_text("GameCapture.AnyFullscreen")
-#define TEXT_SLI_COMPATIBILITY        obs_module_text("SLIFix")
-#define TEXT_ALLOW_TRANSPARENCY       obs_module_text("AllowTransparency")
-#define TEXT_WINDOW                   obs_module_text("WindowCapture.Window")
-#define TEXT_MATCH_PRIORITY           obs_module_text("WindowCapture.Priority")
-#define TEXT_MATCH_TITLE              obs_module_text("WindowCapture.Priority.Title")
-#define TEXT_MATCH_CLASS              obs_module_text("WindowCapture.Priority.Class")
-#define TEXT_MATCH_EXE                obs_module_text("WindowCapture.Priority.Exe")
-#define TEXT_CAPTURE_CURSOR           obs_module_text("CaptureCursor")
-#define TEXT_LIMIT_FRAMERATE          obs_module_text("GameCapture.LimitFramerate")
-#define TEXT_LIMIT_FRAMERATE_TT       obs_module_text("GameCapture.LimitFramerate.TT")
+#define TEXT_MODE                   obs_module_text("Mode")
+#define TEXT_GAME_CAPTURE           obs_module_text("GameCapture")
+#define TEXT_ANY_FULLSCREEN         obs_module_text("GameCapture.AnyFullscreen")
+#define TEXT_SLI_COMPATIBILITY      obs_module_text("SLIFix")
+#define TEXT_ALLOW_TRANSPARENCY     obs_module_text("AllowTransparency")
+#define TEXT_WINDOW                 obs_module_text("WindowCapture.Window")
+#define TEXT_MATCH_PRIORITY         obs_module_text("WindowCapture.Priority")
+#define TEXT_MATCH_TITLE            obs_module_text("WindowCapture.Priority.Title")
+#define TEXT_MATCH_CLASS            obs_module_text("WindowCapture.Priority.Class")
+#define TEXT_MATCH_EXE              obs_module_text("WindowCapture.Priority.Exe")
+#define TEXT_CAPTURE_CURSOR         obs_module_text("CaptureCursor")
+#define TEXT_LIMIT_FRAMERATE        obs_module_text("GameCapture.LimitFramerate")
+#define TEXT_LIMIT_FRAMERATE_TT     obs_module_text("GameCapture.LimitFramerate.TT")
 #define TEXT_FRAMERATE_LIMIT_FPS    obs_module_text("GameCapture.FramerateLimitRatio")
 #define TEXT_FRAMERATE_LIMIT_FPS_TT obs_module_text("GameCapture.FramerateLimitRatio.TT")
-#define TEXT_CAPTURE_OVERLAYS         obs_module_text("GameCapture.CaptureOverlays")
-#define TEXT_ANTI_CHEAT_HOOK          obs_module_text("GameCapture.AntiCheatHook")
-#define TEXT_HOOK_RATE                obs_module_text("GameCapture.HookRate")
-#define TEXT_HOOK_RATE_SLOW           obs_module_text("GameCapture.HookRate.Slow")
-#define TEXT_HOOK_RATE_NORMAL         obs_module_text("GameCapture.HookRate.Normal")
-#define TEXT_HOOK_RATE_FAST           obs_module_text("GameCapture.HookRate.Fast")
-#define TEXT_HOOK_RATE_FASTEST        obs_module_text("GameCapture.HookRate.Fastest")
-#define TEXT_RGBA10A2_SPACE           obs_module_text("GameCapture.Rgb10a2Space")
-#define TEXT_RGBA10A2_SPACE_SRGB      obs_module_text("GameCapture.Rgb10a2Space.Srgb")
-#define TEXT_RGBA10A2_SPACE_2100PQ    obs_module_text("GameCapture.Rgb10a2Space.2100PQ")
+#define TEXT_CAPTURE_OVERLAYS       obs_module_text("GameCapture.CaptureOverlays")
+#define TEXT_ANTI_CHEAT_HOOK        obs_module_text("GameCapture.AntiCheatHook")
+#define TEXT_HOOK_RATE              obs_module_text("GameCapture.HookRate")
+#define TEXT_HOOK_RATE_SLOW         obs_module_text("GameCapture.HookRate.Slow")
+#define TEXT_HOOK_RATE_NORMAL       obs_module_text("GameCapture.HookRate.Normal")
+#define TEXT_HOOK_RATE_FAST         obs_module_text("GameCapture.HookRate.Fast")
+#define TEXT_HOOK_RATE_FASTEST      obs_module_text("GameCapture.HookRate.Fastest")
+#define TEXT_RGBA10A2_SPACE         obs_module_text("GameCapture.Rgb10a2Space")
+#define TEXT_RGBA10A2_SPACE_SRGB    obs_module_text("GameCapture.Rgb10a2Space.Srgb")
+#define TEXT_RGBA10A2_SPACE_2100PQ  obs_module_text("GameCapture.Rgb10a2Space.2100PQ")
 
 #define TEXT_MODE_ANY            TEXT_ANY_FULLSCREEN
 #define TEXT_MODE_WINDOW         obs_module_text("GameCapture.CaptureWindow")
