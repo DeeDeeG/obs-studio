@@ -36,7 +36,7 @@
 #define SETTING_CURSOR                "capture_cursor"
 #define SETTING_TRANSPARENCY          "allow_transparency"
 #define SETTING_LIMIT_FRAMERATE       "limit_framerate"
-#define SETTING_FRAMERATE_LIMIT_RATIO "framerate_limit_ratio"
+#define SETTING_FRAMERATE_LIMIT_FPS   "framerate_limit_fps"
 #define SETTING_CAPTURE_OVERLAYS      "capture_overlays"
 #define SETTING_ANTI_CHEAT_HOOK       "anti_cheat_hook"
 #define SETTING_HOOK_RATE             "hook_rate"
@@ -66,8 +66,8 @@
 #define TEXT_CAPTURE_CURSOR           obs_module_text("CaptureCursor")
 #define TEXT_LIMIT_FRAMERATE          obs_module_text("GameCapture.LimitFramerate")
 #define TEXT_LIMIT_FRAMERATE_TT       obs_module_text("GameCapture.LimitFramerate.TT")
-#define TEXT_FRAMERATE_LIMIT_RATIO    obs_module_text("GameCapture.FramerateLimitRatio")
-#define TEXT_FRAMERATE_LIMIT_RATIO_TT obs_module_text("GameCapture.FramerateLimitRatio.TT")
+#define TEXT_FRAMERATE_LIMIT_FPS    obs_module_text("GameCapture.FramerateLimitRatio")
+#define TEXT_FRAMERATE_LIMIT_FPS_TT obs_module_text("GameCapture.FramerateLimitRatio.TT")
 #define TEXT_CAPTURE_OVERLAYS         obs_module_text("GameCapture.CaptureOverlays")
 #define TEXT_ANTI_CHEAT_HOOK          obs_module_text("GameCapture.AntiCheatHook")
 #define TEXT_HOOK_RATE                obs_module_text("GameCapture.HookRate")
@@ -117,7 +117,7 @@ struct game_capture_config {
 	bool force_shmem;
 	bool allow_transparency;
 	bool limit_framerate;
-	int framerate_limit_ratio;
+	int framerate_limit_fps;
 	bool capture_overlays;
 	bool anticheat_hook;
 	enum hook_rate hook_rate;
@@ -453,9 +453,9 @@ static inline void get_config(struct game_capture_config *cfg,
 		obs_data_get_bool(settings, SETTING_TRANSPARENCY);
 	cfg->limit_framerate =
 		obs_data_get_bool(settings, SETTING_LIMIT_FRAMERATE);
-	cfg->framerate_limit_ratio =
-		(enum framerate_limit_ratio)obs_data_get_int(
-			settings, SETTING_FRAMERATE_LIMIT_RATIO);
+	cfg->framerate_limit_fps =
+		(enum framerate_limit_fps)obs_data_get_int(
+			settings, SETTING_FRAMERATE_LIMIT_FPS);
 	cfg->capture_overlays =
 		obs_data_get_bool(settings, SETTING_CAPTURE_OVERLAYS);
 	cfg->anticheat_hook =
@@ -494,7 +494,7 @@ static inline bool capture_needs_reset(struct game_capture_config *cfg1,
 	} else if (cfg1->limit_framerate != cfg2->limit_framerate) {
 		return true;
 
-	} else if (cfg1->framerate_limit_ratio != cfg2->framerate_limit_ratio) {
+	} else if (cfg1->framerate_limit_fps != cfg2->framerate_limit_fps) {
 		return true;
 
 	} else if (cfg1->capture_overlays != cfg2->capture_overlays) {
@@ -811,17 +811,14 @@ static inline void reset_frame_interval(struct game_capture *gc)
 	uint64_t interval = 0;
 
 	if (gc->config.limit_framerate && obs_get_video_info(&ovi)) {
-		interval =
-			util_mul_div64(ovi.fps_den, 1000000000ULL, ovi.fps_num);
-
-		/* Allow limiting capture framerate to a ratio of the encode
-		 * framerate.  If a game running at 900 FPS is being captured
-		 * without some sort of limited capture interval, it will
-		 * dramatically reduce performance.  However, more frequent
-		 * capturing can better handle uneven frame pacing in the game.
-		 * Allow users to tune the capture rate for a trade-off between
+		/* Allow limiting capture framerate to a set FPS.
+		 * If a game running at 900 FPS is being captured without some
+		 * sort of limited capture interval, it will dramatically reduce
+		 * performance. However, more frequent capturing can better
+		 * handle uneven frame pacing in the game. Allow users to tune
+		 * the capture rate for a trade-off between
 		 * performance vs frame pacing handling. */
-		interval /= gc->config.framerate_limit_ratio;
+		interval = 1000000000ULL / gc->config.framerate_limit_fps;
 	}
 
 	gc->global_hook_info->frame_interval = interval;
@@ -2290,7 +2287,7 @@ static void game_capture_defaults(obs_data_t *settings)
 	obs_data_set_default_bool(settings, SETTING_CURSOR, true);
 	obs_data_set_default_bool(settings, SETTING_TRANSPARENCY, false);
 	obs_data_set_default_bool(settings, SETTING_LIMIT_FRAMERATE, true);
-	obs_data_set_default_int(settings, SETTING_FRAMERATE_LIMIT_RATIO, 2);
+	obs_data_set_default_int(settings, SETTING_FRAMERATE_LIMIT_FPS, 60);
 	obs_data_set_default_bool(settings, SETTING_CAPTURE_OVERLAYS, false);
 	obs_data_set_default_bool(settings, SETTING_ANTI_CHEAT_HOOK, true);
 	obs_data_set_default_int(settings, SETTING_HOOK_RATE,
@@ -2466,9 +2463,9 @@ static obs_properties_t *game_capture_properties(void *data)
 				TEXT_LIMIT_FRAMERATE);
 	obs_property_set_long_description(p, TEXT_LIMIT_FRAMERATE_TT);
 
-	p = obs_properties_add_int(ppts, SETTING_FRAMERATE_LIMIT_RATIO,
-				TEXT_FRAMERATE_LIMIT_RATIO, 1, 24, 1);
-	obs_property_set_long_description(p, TEXT_FRAMERATE_LIMIT_RATIO_TT);
+	p = obs_properties_add_int(ppts, SETTING_FRAMERATE_LIMIT_FPS,
+				TEXT_FRAMERATE_LIMIT_FPS, 1, 1000, 1);
+	obs_property_set_long_description(p, TEXT_FRAMERATE_LIMIT_FPS_TT);
 
 	obs_properties_add_bool(ppts, SETTING_CURSOR, TEXT_CAPTURE_CURSOR);
 
