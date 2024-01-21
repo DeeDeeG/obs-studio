@@ -173,18 +173,30 @@ static inline bool frame_ready(uint64_t interval)
 	static uint64_t last_time = 0;
 	uint64_t elapsed;
 	uint64_t t;
+	uint64_t early_allowance = interval / 4;
 
 	if (!interval) {
+		// No limit, frame is always "ready to capture."
 		return true;
 	}
 
 	t = os_gettime_ns();
 	elapsed = t - last_time;
 
-	if (elapsed < interval) {
+	if (elapsed < interval - early_allowance) {
+		// Frame was too fast/early for the capture rate,
+		// so don't capture it. Just wait for the next one.
+		// We allow frame to be *just slightly* early to avoid
+		// yeeting too many frames in low-FPS, low-capture-rate
+		// situations, or when game drifts a tiny bit early.
 		return false;
 	}
 
+	// If a frame was quite late, we need to catch last_time up to now,
+	// so elapsed can get back below the capture rate limit interval.
+	// Otherwise, with elapsed always > interval, the limiter would stop
+	// rejecting frames, and capture rate would be effectively permanently
+	// uncapped.
 	last_time = (elapsed > interval * 2) ? t : last_time + interval;
 	return true;
 }
