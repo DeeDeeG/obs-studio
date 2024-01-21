@@ -182,21 +182,10 @@ static inline bool frame_ready(uint64_t interval)
 	elapsed = t - last_time;
 
 	if (elapsed < interval) {
-		// Scooch back a bit in case we're riding the present timing
-		// way too closely (scooch 8ms).
-		last_time -= 8000000ULL;
 		return false;
 	}
 
-	if (elapsed > interval * 2) {
-		// We're catching up from the game being really slow, but
-		// subtract an 8 ms offset so we land in the middle of a 60FPS
-		// frame, not right on the edge of one frame and the next (??)
-		last_time = t - 8000000ULL;
-	} else {
-		last_time = last_time + interval;
-	}
-
+	last_time = (elapsed > interval * 2) ? t : last_time + interval;
 	return true;
 }
 
