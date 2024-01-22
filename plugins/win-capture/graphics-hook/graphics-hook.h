@@ -183,13 +183,21 @@ static inline bool frame_ready(uint64_t interval)
 	t = os_gettime_ns();
 	elapsed = t - last_time;
 
-	if (elapsed < interval - early_allowance) {
-		// Frame was too fast/early for the capture rate,
-		// so don't capture it. Just wait for the next one.
-		// We allow frame to be *just slightly* early to avoid
-		// yeeting too many frames in low-FPS, low-capture-rate
-		// situations, or when game drifts a tiny bit early.
-		return false;
+	if (elapsed < interval) {
+		hlog_verbose(
+			"graphics hook: Note: stock graphics hook would have yeeted (ignored) this frame without the current patches.");
+
+		if (elapsed < interval - early_allowance) {
+			hlog_verbose(
+				"graphics hook: Frame was too fast. Yeeting (ignoring) one game frame, not capturing, waiting for the next one.");
+
+			// Frame was too fast/early for the capture rate,
+			// so don't capture it. Just wait for the next one.
+			// We allow frame to be *just slightly* early to avoid
+			// yeeting too many frames in low-FPS, low-capture-rate
+			// situations, or when game drifts a tiny bit early.
+			return false;
+		}
 	}
 
 	// If a frame was quite late, we need to catch last_time up to now,
@@ -197,7 +205,15 @@ static inline bool frame_ready(uint64_t interval)
 	// Otherwise, with elapsed always > interval, the limiter would stop
 	// rejecting frames, and capture rate would be effectively permanently
 	// uncapped.
-	last_time = (elapsed > interval * 2) ? t : last_time + interval;
+	if (elapsed > interval * 2) {
+		hlog_verbose(
+			"graphics hook: A game frame was quite late. Catching up last_time to now (i.e. last_time = t = os_gettime_ns) so the rate limiter doesn't uncap itself permanently.");
+
+		last_time = t;
+	} else {
+		last_time = last_time + interval;
+	}
+
 	return true;
 }
 
