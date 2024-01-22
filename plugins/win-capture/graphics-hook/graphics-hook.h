@@ -185,7 +185,8 @@ static inline bool frame_ready(uint64_t interval)
 
 	if (elapsed < interval) {
 		hlog_verbose(
-			"graphics hook: Note: stock graphics hook would have yeeted (ignored) this frame without the current patches.");
+			"graphics hook: Note: stock graphics hook would have yeeted (ignored) this frame without the current patches. Scooching window earlier a bit.");
+		last_time = last_time - (interval / 10);
 
 		if (elapsed < interval - early_allowance) {
 			hlog_verbose(
