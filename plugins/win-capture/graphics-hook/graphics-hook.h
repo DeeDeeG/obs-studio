@@ -173,7 +173,6 @@ static inline bool frame_ready(uint64_t interval)
 	static uint64_t last_time = 0;
 	uint64_t elapsed;
 	uint64_t t;
-	uint64_t early_allowance = interval / 4;
 
 	if (!interval) {
 		// No limit, frame is always "ready to capture."
@@ -185,20 +184,14 @@ static inline bool frame_ready(uint64_t interval)
 
 	if (elapsed < interval) {
 		hlog_verbose(
-			"graphics hook: Note: stock graphics hook would have yeeted (ignored) this frame without the current patches. Scooching window earlier a bit.");
-		last_time = last_time - (interval / 10);
+			"graphics hook: Frame was too fast. Yeeting (ignoring) one game frame, not capturing, waiting for the next one.");
 
-		if (elapsed < interval - early_allowance) {
-			hlog_verbose(
-				"graphics hook: Frame was too fast. Yeeting (ignoring) one game frame, not capturing, waiting for the next one.");
-
-			// Frame was too fast/early for the capture rate,
-			// so don't capture it. Just wait for the next one.
-			// We allow frame to be *just slightly* early to avoid
-			// yeeting too many frames in low-FPS, low-capture-rate
-			// situations, or when game drifts a tiny bit early.
-			return false;
-		}
+		// Frame was too fast/early for the capture rate,
+		// so don't capture it. Just wait for the next one.
+		// We allow frame to be *just slightly* early to avoid
+		// yeeting too many frames in low-FPS, low-capture-rate
+		// situations, or when game drifts a tiny bit early.
+		return false;
 	}
 
 	// If a frame was quite late, we need to catch last_time up to now,
