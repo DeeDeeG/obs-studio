@@ -201,7 +201,7 @@ static inline bool frame_ready(uint64_t interval)
 	// uncapped.
 	if (elapsed > interval * 2) {
 		hlog_verbose(
-			"graphics hook: A game frame was quite late. Catching up last_time to now (i.e. last_time = t = os_gettime_ns) so the rate limiter doesn't uncap itself permanently.");
+			"graphics hook: This present time is quite late (potentially due to cumulative drift and/or not advancing last_time for frames we yeeted). Catching up last_time to now (i.e. last_time = t = os_gettime_ns) so the rate limiter doesn't uncap itself permanently.");
 
 		last_time = t;
 	} else {
