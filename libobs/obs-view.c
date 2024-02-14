@@ -120,6 +120,9 @@ void obs_view_render(obs_view_t *view)
 	if (!view)
 		return;
 
+	blog(LOG_DEBUG,
+	     "In obs_view_render... probably rendering the current view!");
+
 	pthread_mutex_lock(&view->channels_mutex);
 
 	for (size_t i = 0; i < MAX_CHANNELS; i++) {
