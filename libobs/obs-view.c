@@ -123,6 +123,7 @@ void obs_view_render(obs_view_t *view)
 	blog(LOG_DEBUG,
 	     "In obs_view_render... probably rendering the current view!");
 	blog(LOG_DEBUG, "in obs_view_render, timestamp: %llu", os_gettime_ns());
+	blog(LOG_DEBUG, "In obs_view_render, bottom slice of the blog sandwich.");
 
 	pthread_mutex_lock(&view->channels_mutex);
 
