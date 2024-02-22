@@ -174,6 +174,23 @@ static inline bool frame_ready(uint64_t interval)
 	uint64_t elapsed;
 	uint64_t t;
 
+	hlog_verbose("in frame_ready! %llu", os_gettime_ns());
+
+	hlog_verbose("How slow is os_gettime_ns?");
+	hlog_verbose("%llu %llu %llu %llu %llu", os_gettime_ns(),
+		     os_gettime_ns(), os_gettime_ns(), os_gettime_ns(),
+		     os_gettime_ns());
+
+	hlog_verbose("How slow is hlog_verbose?");
+	hlog_verbose("start %llu", os_gettime_ns());
+	hlog_verbose("Hey!");
+	hlog_verbose("How's");
+	hlog_verbose("It");
+	hlog_verbose("Going,");
+	hlog_verbose("Mate?");
+	hlog_verbose("end %llu", os_gettime_ns());
+
+
 	if (!interval) {
 		// No limit, frame is always "ready to capture."
 		return true;
