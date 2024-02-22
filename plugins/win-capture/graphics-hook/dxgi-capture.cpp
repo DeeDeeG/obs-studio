@@ -216,6 +216,11 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 		setup_dxgi(swap);
 	}
 
+	++dxgi_presenting;
+	const HRESULT hr = RealPresent(swap, sync_interval, flags);
+	--dxgi_presenting;
+	dxgi_present_attempted = true;
+
 	hlog_verbose(
 		"Present callback: sync_interval=%u, flags=%u, current_swap=0x%" PRIX64
 		", expected_swap=0x%" PRIX64,
@@ -229,11 +234,6 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 			backbuffer->Release();
 		}
 	}
-
-	++dxgi_presenting;
-	const HRESULT hr = RealPresent(swap, sync_interval, flags);
-	--dxgi_presenting;
-	dxgi_present_attempted = true;
 
 	if (capture && capture_overlay) {
 		/*
@@ -281,6 +281,11 @@ hook_present1(IDXGISwapChain1 *swap, UINT sync_interval, UINT flags,
 		setup_dxgi(swap);
 	}
 
+	++dxgi_presenting;
+	const HRESULT hr = RealPresent1(swap, sync_interval, flags, params);
+	--dxgi_presenting;
+	dxgi_present_attempted = true;
+
 	hlog_verbose(
 		"Present1 callback: sync_interval=%u, flags=%u, current_swap=0x%" PRIX64
 		", expected_swap=0x%" PRIX64,
@@ -294,11 +299,6 @@ hook_present1(IDXGISwapChain1 *swap, UINT sync_interval, UINT flags,
 			backbuffer->Release();
 		}
 	}
-
-	++dxgi_presenting;
-	const HRESULT hr = RealPresent1(swap, sync_interval, flags, params);
-	--dxgi_presenting;
-	dxgi_present_attempted = true;
 
 	if (capture && capture_overlay) {
 		if (resize_buffers_called) {
