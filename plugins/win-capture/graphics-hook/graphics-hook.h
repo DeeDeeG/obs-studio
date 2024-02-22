@@ -184,7 +184,8 @@ static inline bool frame_ready(uint64_t interval)
 
 	if (elapsed < interval) {
 		hlog_verbose(
-			"graphics hook: Frame was too fast. Yeeting (ignoring) one game frame, not capturing, waiting for the next one.");
+			"graphics hook: Frame was too fast. Yeeting (ignoring) one game frame, not capturing, waiting for the next one. %llu",
+			os_gettime_ns());
 
 		// Frame was too fast/early for the capture rate,
 		// so don't capture it. Just wait for the next one.
@@ -201,12 +202,17 @@ static inline bool frame_ready(uint64_t interval)
 	// uncapped.
 	if (elapsed > interval * 2) {
 		hlog_verbose(
-			"graphics hook: This present time is quite late (potentially due to cumulative drift and/or not advancing last_time for frames we yeeted). Catching up last_time to now (i.e. last_time = t = os_gettime_ns) so the rate limiter doesn't uncap itself permanently.");
+			"graphics hook: This present time is quite late (potentially due to cumulative drift and/or not advancing last_time for frames we yeeted). Catching up last_time to now (i.e. last_time = t = os_gettime_ns) so the rate limiter doesn't uncap itself permanently. %llu",
+			os_gettime_ns());
 
 		last_time = t;
 	} else {
 		last_time = last_time + interval;
 	}
+
+	hlog_verbose(
+		"graphics hook: frame_ready says this frame is ready! %llu",
+		os_gettime_ns());
 
 	return true;
 }
