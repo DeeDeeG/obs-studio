@@ -284,6 +284,10 @@ static void d3d11_init(IDXGISwapChain *swap)
 
 static inline void d3d11_copy_texture(ID3D11Resource *dst, ID3D11Resource *src)
 {
+	hlog_verbose(
+		"In d3d11_copy_texture, about to actually copy shtex from d3d11! %llu",
+		os_gettime_ns());
+
 	if (data.multisampled) {
 		data.context->ResolveSubresource(dst, 0, src, 0, data.format);
 	} else {
@@ -303,6 +307,10 @@ static void d3d11_shmem_capture_copy(int i)
 
 	if (data.texture_ready[i]) {
 		data.texture_ready[i] = false;
+
+		hlog_verbose(
+			"In d3d11_shmem_capture_copy, about to actually copy shmem from d3d11! %llu",
+			os_gettime_ns());
 
 		hr = data.context->Map(data.copy_surfaces[i], 0, D3D11_MAP_READ,
 				       0, &map);

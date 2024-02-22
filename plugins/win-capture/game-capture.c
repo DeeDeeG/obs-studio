@@ -1948,6 +1948,8 @@ static void game_capture_tick(void *data, float seconds)
 		} else {
 			if (gc->copy_texture) {
 				obs_enter_graphics();
+				debug("game_capture_tick, Entered graphics, about to copy texture! %llu",
+				      os_gettime_ns());
 				gc->copy_texture(gc);
 				obs_leave_graphics();
 			}
@@ -2017,6 +2019,11 @@ static inline void game_capture_render_cursor(struct game_capture *gc)
 
 static void game_capture_render(void *data, gs_effect_t *unused)
 {
+	blog(LOG_DEBUG,
+	     "in game_capture_render, probably rendering the game capture source! %llu",
+	     os_gettime_ns());
+
+
 	UNUSED_PARAMETER(unused);
 
 	struct game_capture *gc = data;
