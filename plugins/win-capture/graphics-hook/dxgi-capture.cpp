@@ -223,8 +223,8 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 
 	hlog_verbose(
 		"Present callback: sync_interval=%u, flags=%u, current_swap=0x%" PRIX64
-		", expected_swap=0x%" PRIX64,
-		sync_interval, flags, swap, data.swap);
+		", expected_swap=0x%" PRIX64 " - %llu",
+		sync_interval, flags, swap, data.swap, os_gettime_ns());
 	const bool capture = !test_draw && swap == data.swap && data.capture;
 	if (capture && !capture_overlay) {
 		IUnknown *backbuffer = get_dxgi_backbuffer(swap);

@@ -119,6 +119,9 @@ void obs_view_render(obs_view_t *view)
 {
 	if (!view)
 		return;
+	blog(LOG_DEBUG,
+	     "In obs_view_render... probably rendering the current view! %llu",
+	     os_gettime_ns());
 
 	pthread_mutex_lock(&view->channels_mutex);
 
