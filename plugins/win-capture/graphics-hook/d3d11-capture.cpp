@@ -284,14 +284,17 @@ static void d3d11_init(IDXGISwapChain *swap)
 
 static inline void d3d11_copy_texture(ID3D11Resource *dst, ID3D11Resource *src)
 {
+	static uint64_t last_time = 0;
+	uint64_t this_time = os_gettime_ns();
 	hlog_verbose(
-		"In d3d11_copy_texture, about to actually copy shtex from d3d11! %llu",
-		os_gettime_ns());
+		"In d3d11_copy_texture, about to actually copy shtex from d3d11! last_time: %llu, this_time: %llu, elapsed: %llu",
+		last_time, this_time, this_time - last_time);
 	if (data.multisampled) {
 		data.context->ResolveSubresource(dst, 0, src, 0, data.format);
 	} else {
 		data.context->CopyResource(dst, src);
 	}
+	last_time = this_time;
 }
 
 static inline void d3d11_shtex_capture(ID3D11Resource *backbuffer)

@@ -119,9 +119,13 @@ void obs_view_render(obs_view_t *view)
 {
 	if (!view)
 		return;
+
+	static uint64_t last_time = 0;
+	uint64_t this_time = os_gettime_ns();
+
 	blog(LOG_DEBUG,
-	     "In obs_view_render... probably rendering the current view! %llu",
-	     os_gettime_ns());
+	     "In obs_view_render... probably rendering the current view! last_time: %llu, this_time: %llu, elapsed: %llu",
+	     last_time, this_time, this_time - last_time);
 
 	pthread_mutex_lock(&view->channels_mutex);
 
@@ -141,6 +145,7 @@ void obs_view_render(obs_view_t *view)
 	}
 
 	pthread_mutex_unlock(&view->channels_mutex);
+	last_time = this_time;
 }
 
 static inline size_t find_mix_for_view(obs_view_t *view)

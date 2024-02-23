@@ -198,6 +198,9 @@ static void update_mismatch_count(bool match)
 static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 					      UINT sync_interval, UINT flags)
 {
+	static uint64_t last_time = 0;
+	uint64_t this_time = os_gettime_ns();
+
 	if (should_passthrough()) {
 		dxgi_presenting = true;
 		const HRESULT hr = RealPresent(swap, sync_interval, flags);
@@ -216,15 +219,28 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 		setup_dxgi(swap);
 	}
 
+	uint64_t real_present_start = os_gettime_ns();
+
 	++dxgi_presenting;
 	const HRESULT hr = RealPresent(swap, sync_interval, flags);
 	--dxgi_presenting;
 	dxgi_present_attempted = true;
 
-	hlog_verbose(
+	uint64_t real_present_end = os_gettime_ns();
+
+	/* hlog_verbose(
 		"Present callback: sync_interval=%u, flags=%u, current_swap=0x%" PRIX64
-		", expected_swap=0x%" PRIX64 " - %llu",
-		sync_interval, flags, swap, data.swap, os_gettime_ns());
+		", expected_swap=0x%" PRIX64 ", now_timestamp=%llu",
+		sync_interval, flags, swap, data.swap, os_gettime_ns()); */
+
+	hlog_verbose(
+		"Present callback: real_present_start: %llu, real_present_end: %llu, real_present_elapsed: %llu, this_time: %llu, last_time: %llu, elapsed since last time: %llu",
+		real_present_start, real_present_end,
+		real_present_end - real_present_start, this_time, last_time,
+		this_time - last_time);
+
+	uint64_t capture_start = os_gettime_ns();
+
 	const bool capture = !test_draw && swap == data.swap && data.capture;
 	if (capture && !capture_overlay) {
 		IUnknown *backbuffer = get_dxgi_backbuffer(swap);
@@ -234,6 +250,12 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 			backbuffer->Release();
 		}
 	}
+
+	uint64_t capture_end = os_gettime_ns();
+
+	hlog_verbose(
+		"In hook_present... capture_start: %llu, capture_end: %llu, capture_elapsed: %llu",
+		capture_start, capture_end, capture_end - capture_start);
 
 	if (capture && capture_overlay) {
 		/*
@@ -255,6 +277,7 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 		}
 	}
 
+	last_time = this_time;
 	return hr;
 }
 
