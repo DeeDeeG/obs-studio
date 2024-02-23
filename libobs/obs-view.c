@@ -124,20 +124,6 @@ void obs_view_render(obs_view_t *view)
 	     "In obs_view_render... probably rendering the current view! %llu",
 	     os_gettime_ns());
 
-	blog(LOG_DEBUG, "How slow is os_gettime_ns?");
-	blog(LOG_DEBUG, "%llu %llu %llu %llu %llu", os_gettime_ns(),
-	     os_gettime_ns(), os_gettime_ns(), os_gettime_ns(),
-	     os_gettime_ns());
-
-	blog(LOG_DEBUG, "How slow is blog?");
-	blog(LOG_DEBUG, "start %llu", os_gettime_ns());
-	blog(LOG_DEBUG, "Hey!");
-	blog(LOG_DEBUG, "How's");
-	blog(LOG_DEBUG, "It");
-	blog(LOG_DEBUG, "Going,");
-	blog(LOG_DEBUG, "Mate?");
-	blog(LOG_DEBUG, "end %llu", os_gettime_ns());
-
 	pthread_mutex_lock(&view->channels_mutex);
 
 	for (size_t i = 0; i < MAX_CHANNELS; i++) {
