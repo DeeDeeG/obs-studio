@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 #define NUM_BUFFERS 3
-#define HOOK_VERBOSE_LOGGING 1
+#define HOOK_VERBOSE_LOGGING 0
 
 #if HOOK_VERBOSE_LOGGING
 #define hlog_verbose(...) hlog(__VA_ARGS__)
@@ -183,10 +183,6 @@ static inline bool frame_ready(uint64_t interval)
 	elapsed = t - last_time;
 
 	if (elapsed < interval) {
-		hlog_verbose(
-			"graphics hook: Frame was too fast. Yeeting (ignoring) one game frame, not capturing, waiting for the next one. %llu",
-			os_gettime_ns());
-
 		// Frame was too fast/early for the capture rate,
 		// so don't capture it. Just wait for the next one.
 		// We allow frame to be *just slightly* early to avoid
@@ -200,19 +196,7 @@ static inline bool frame_ready(uint64_t interval)
 	// Otherwise, with elapsed always > interval, the limiter would stop
 	// rejecting frames, and capture rate would be effectively permanently
 	// uncapped.
-	if (elapsed > interval * 2) {
-		hlog_verbose(
-			"graphics hook: This present time is quite late (potentially due to cumulative drift and/or not advancing last_time for frames we yeeted). Catching up last_time to now (i.e. last_time = t = os_gettime_ns) so the rate limiter doesn't uncap itself permanently. %llu",
-			os_gettime_ns());
-
-		last_time = t;
-	} else {
-		last_time = last_time + interval;
-	}
-
-	hlog_verbose(
-		"graphics hook: frame_ready says this frame is ready! %llu",
-		os_gettime_ns());
+	last_time = (elapsed > interval * 2) ? t : last_time + interval;
 
 	return true;
 }

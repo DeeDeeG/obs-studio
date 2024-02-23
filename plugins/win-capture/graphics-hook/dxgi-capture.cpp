@@ -199,8 +199,6 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 					      UINT sync_interval, UINT flags)
 {
 	if (should_passthrough()) {
-		hlog_verbose(
-			"in hook_present: should_passthrough() returned true, I guess!");
 		dxgi_presenting = true;
 		const HRESULT hr = RealPresent(swap, sync_interval, flags);
 		dxgi_presenting = false;
@@ -265,9 +263,7 @@ hook_present1(IDXGISwapChain1 *swap, UINT sync_interval, UINT flags,
 	      const DXGI_PRESENT_PARAMETERS *params)
 {
 	if (should_passthrough()) {
-		hlog_verbose(
-			"in hook_present1: should_passthrough() returned true, I guess!");
-			dxgi_presenting = true;
+		dxgi_presenting = true;
 		const HRESULT hr =
 			RealPresent1(swap, sync_interval, flags, params);
 		dxgi_presenting = false;

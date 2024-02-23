@@ -1232,10 +1232,6 @@ static inline void send_packet(struct obs_encoder *encoder,
 			       struct encoder_packet *packet)
 {
 	profile_start(send_packet_name);
-
-	blog(LOG_DEBUG,
-	     "In send_packet, probably about to send a packet for encode (?)");
-
 	/* include SEI in first video packet */
 	if (encoder->info.type == OBS_ENCODER_VIDEO && !cb->sent_first_packet)
 		send_first_video_packet(encoder, cb, packet);

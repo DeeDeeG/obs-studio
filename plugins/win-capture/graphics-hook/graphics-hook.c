@@ -663,9 +663,6 @@ finish:
 
 void shmem_copy_data(size_t idx, void *volatile data)
 {
-	hlog_verbose(
-		"In graphics-hook.c shmem_copy_data, about to copy shmem! %llu",
-		os_gettime_ns());
 	EnterCriticalSection(&thread_data.data_mutex);
 	thread_data.cur_tex = (int)idx;
 	thread_data.cur_data = data;

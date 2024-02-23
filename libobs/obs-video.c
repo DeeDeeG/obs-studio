@@ -439,20 +439,11 @@ static inline bool queue_frame(struct obs_core_video_mix *video,
 			       bool raw_active,
 			       struct obs_vframe_info *vframe_info)
 {
-	blog(LOG_DEBUG,
-	     "in obs-video.c queue_frame, maybe queueing [a] frame[s]? %llu",
-	     os_gettime_ns());
-
 	bool duplicate =
 		!video->gpu_encoder_avail_queue.size ||
 		(video->gpu_encoder_queue.size && vframe_info->count > 1);
 
 	if (duplicate) {
-
-		blog(LOG_DEBUG,
-		     "in obs-video.c queue_frame, DUPLICATE DETECTED! %llu",
-		     os_gettime_ns());
-
 		struct obs_tex_frame *tf = circlebuf_data(
 			&video->gpu_encoder_queue,
 			video->gpu_encoder_queue.size - sizeof(*tf));
@@ -510,10 +501,6 @@ extern void full_stop(struct obs_encoder *encoder);
 static inline void encode_gpu(struct obs_core_video_mix *video, bool raw_active,
 			      struct obs_vframe_info *vframe_info)
 {
-	blog(LOG_DEBUG,
-	     "in obs-video.c encode_gpu! Maybe... encoding some stuff...? %llu",
-	     os_gettime_ns());
-
 	while (queue_frame(video, raw_active, vframe_info))
 		;
 }
