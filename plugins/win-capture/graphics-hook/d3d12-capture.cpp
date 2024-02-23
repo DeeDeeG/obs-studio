@@ -439,8 +439,8 @@ bool hook_d3d12(void)
 {
 	HMODULE d3d12_module = get_system_module("d3d12.dll");
 	if (!d3d12_module) {
-		hlog_verbose(
-			"Failed to find d3d12.dll. Skipping hook attempt.");
+		/* hlog_verbose(
+			"Failed to find d3d12.dll. Skipping hook attempt."); */
 		return false;
 	}
 
