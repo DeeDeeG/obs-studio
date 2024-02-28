@@ -601,8 +601,7 @@ static bool init_encoder_base(struct nvenc_data *enc, obs_data_t *settings,
 
 	/* lookahead */
 	const bool use_profile_lookahead = config->rcParams.enableLookahead;
-	lookahead = nv_get_cap(enc, NV_ENC_CAPS_SUPPORT_LOOKAHEAD) &&
-		    (lookahead || use_profile_lookahead);
+	lookahead = lookahead && nv_get_cap(enc, NV_ENC_CAPS_SUPPORT_LOOKAHEAD);
 	if (lookahead) {
 		enc->rc_lookahead = use_profile_lookahead
 					    ? config->rcParams.lookaheadDepth
