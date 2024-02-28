@@ -736,7 +736,9 @@ static bool init_encoder_h264(struct nvenc_data *enc, obs_data_t *settings,
 	h264_config->sliceMode = 3;
 	h264_config->sliceModeData = 1;
 
-	h264_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_MIDDLE;
+	if (nv_get_cap(enc, NV_ENC_CAPS_SUPPORT_BFRAME_REF_MODE)) {
+		h264_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_MIDDLE;
+	}
 
 	/* Enable CBR padding */
 	if (config->rcParams.rateControlMode == NV_ENC_PARAMS_RC_CBR)
@@ -825,7 +827,9 @@ static bool init_encoder_hevc(struct nvenc_data *enc, obs_data_t *settings,
 	hevc_config->sliceMode = 3;
 	hevc_config->sliceModeData = 1;
 
-	hevc_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_MIDDLE;
+	if (nv_get_cap(enc, NV_ENC_CAPS_SUPPORT_BFRAME_REF_MODE)) {
+		hevc_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_MIDDLE;
+	}
 
 	/* Enable CBR padding */
 	if (config->rcParams.rateControlMode == NV_ENC_PARAMS_RC_CBR)
