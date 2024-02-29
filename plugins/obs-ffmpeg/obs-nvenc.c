@@ -737,7 +737,7 @@ static bool init_encoder_h264(struct nvenc_data *enc, obs_data_t *settings,
 	h264_config->sliceModeData = 1;
 
 	if (nv_get_cap(enc, NV_ENC_CAPS_SUPPORT_BFRAME_REF_MODE)) {
-		h264_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_MIDDLE;
+		h264_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_EACH;
 	}
 
 	/* Enable CBR padding */
@@ -828,7 +828,7 @@ static bool init_encoder_hevc(struct nvenc_data *enc, obs_data_t *settings,
 	hevc_config->sliceModeData = 1;
 
 	if (nv_get_cap(enc, NV_ENC_CAPS_SUPPORT_BFRAME_REF_MODE)) {
-		hevc_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_MIDDLE;
+		hevc_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_EACH;
 	}
 
 	/* Enable CBR padding */
@@ -922,7 +922,9 @@ static bool init_encoder_av1(struct nvenc_data *enc, obs_data_t *settings,
 
 	av1_config->idrPeriod = gop_size;
 
-	av1_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_MIDDLE;
+	if (nv_get_cap(enc, NV_ENC_CAPS_SUPPORT_BFRAME_REF_MODE)) {
+		av1_config->useBFramesAsRef = NV_ENC_BFRAME_REF_MODE_EACH;
+	}
 
 	av1_config->colorRange = (voi->range == VIDEO_RANGE_FULL);
 
