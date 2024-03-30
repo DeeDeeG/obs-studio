@@ -5,6 +5,7 @@
 #include <inttypes.h>
 
 #include "graphics-hook.h"
+#include <util/platform.h>
 
 #include <detours.h>
 
@@ -221,6 +222,9 @@ static HRESULT STDMETHODCALLTYPE hook_present(IDXGISwapChain *swap,
 	--dxgi_presenting;
 	dxgi_present_attempted = true;
 
+	// Delay between realpresent and OBS frame capture, in case this helps, I dunno man.
+	os_sleep_ms(2);
+
 	hlog_verbose(
 		"Present callback: sync_interval=%u, flags=%u, current_swap=0x%" PRIX64
 		", expected_swap=0x%" PRIX64,
@@ -285,6 +289,9 @@ hook_present1(IDXGISwapChain1 *swap, UINT sync_interval, UINT flags,
 	const HRESULT hr = RealPresent1(swap, sync_interval, flags, params);
 	--dxgi_presenting;
 	dxgi_present_attempted = true;
+
+	// Delay between realpresent1 and OBS frame capture, in case this helps, I dunno man.
+	os_sleep_ms(2);
 
 	hlog_verbose(
 		"Present1 callback: sync_interval=%u, flags=%u, current_swap=0x%" PRIX64
