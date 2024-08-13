@@ -312,15 +312,14 @@ mfxStatus QSV_Encoder_Internal::InitParams(qsv_param_t *pParams,
 	memset(&m_co2, 0, sizeof(mfxExtCodingOption2));
 	m_co2.Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
 	m_co2.Header.BufferSz = sizeof(m_co2);
-	if (pParams->bRepeatHeaders)
-		m_co2.RepeatPPS = MFX_CODINGOPTION_ON;
-	else
-		m_co2.RepeatPPS = MFX_CODINGOPTION_OFF;
+	m_co2.RepeatPPS = MFX_CODINGOPTION_OFF;
 
 	memset(&m_co3, 0, sizeof(mfxExtCodingOption3));
 	m_co3.Header.BufferId = MFX_EXTBUFF_CODING_OPTION3;
 	m_co3.Header.BufferSz = sizeof(m_co3);
 
+	if (codec != QSV_CODEC_AVC)
+		m_co2.RepeatPPS = MFX_CODINGOPTION_ON;
 	if (pParams->nbFrames > 1)
 		m_co2.BRefType = MFX_B_REF_PYRAMID;
 
@@ -350,7 +349,7 @@ mfxStatus QSV_Encoder_Internal::InitParams(qsv_param_t *pParams,
 			m_co3.ScenarioInfo = MFX_SCENARIO_GAME_STREAMING;
 		}
 		// CQM to follow UI setting
-		if (pParams->bCQM && !pParams->bRepeatHeaders) {
+		if (pParams->bCQM) {
 			m_co3.AdaptiveCQM = MFX_CODINGOPTION_ON;
 			if (m_co3.ScenarioInfo != MFX_SCENARIO_GAME_STREAMING) {
 				m_co3.ScenarioInfo =
