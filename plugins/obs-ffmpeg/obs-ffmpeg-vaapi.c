@@ -696,35 +696,27 @@ static bool vaapi_encode_internal(struct vaapi_encoder *enc, AVFrame *frame,
 			size_t size;
 
 			enc->first_packet = false;
-
-			switch (enc->codec) {
-			case CODEC_HEVC:
 #ifdef ENABLE_HEVC
+			if (enc->codec == CODEC_HEVC) {
 				obs_extract_hevc_headers(
 					enc->packet->data, enc->packet->size,
 					&new_packet, &size, &enc->header,
 					&enc->header_size, &enc->sei,
 					&enc->sei_size);
-				break;
-#else
-				warn("vaapi_encode: HEVC codec is not supported");
-				goto fail;
+			} else
 #endif
-			case CODEC_H264:
+				if (enc->codec == CODEC_H264) {
 				obs_extract_avc_headers(
 					enc->packet->data, enc->packet->size,
 					&new_packet, &size, &enc->header,
 					&enc->header_size, &enc->sei,
 					&enc->sei_size);
-				break;
-
-			case CODEC_AV1:
+			} else if (enc->codec == CODEC_AV1) {
 				obs_extract_av1_headers(enc->packet->data,
 							enc->packet->size,
 							&new_packet, &size,
 							&enc->header,
 							&enc->header_size);
-				break;
 			}
 
 			da_copy_array(enc->buffer, new_packet, size);
