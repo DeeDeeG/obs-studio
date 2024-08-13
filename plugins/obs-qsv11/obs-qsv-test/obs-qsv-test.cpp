@@ -162,13 +162,7 @@ try {
 		throw "CreateDXGIFactory1 failed";
 
 	mfxLoader loader = MFXLoad();
-	if (!loader)
-		throw "MFXLoad failed";
-
 	mfxConfig cfg = MFXCreateConfig(loader);
-	if (!cfg)
-		throw "MFXCreateConfig failed";
-
 	mfxVariant impl;
 
 	// Low latency is disabled due to encoding capabilities not being provided before TGL for VPL
@@ -177,16 +171,14 @@ try {
 	MFXSetConfigFilterProperty(
 		cfg, (const mfxU8 *)"mfxImplDescription.Impl", impl);
 
-	mfxSession m_session = nullptr;
+	mfxSession m_session;
 	mfxStatus sts = MFXCreateSession(loader, 0, &m_session);
 
 	uint32_t idx = 0;
 	while (get_adapter_caps(factory, loader, m_session, idx++) == true)
 		;
 
-	if (m_session)
-		MFXClose(m_session);
-
+	MFXClose(m_session);
 	MFXUnload(loader);
 
 	for (auto &[idx, caps] : adapter_info) {
