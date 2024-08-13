@@ -162,7 +162,7 @@ struct vaapi_device {
 	const char *driver;
 };
 
-static void vaapi_open(char *device_path, struct vaapi_device *device)
+void vaapi_open(char *device_path, struct vaapi_device *device)
 {
 	int fd = open(device_path, O_RDWR);
 	if (fd < 0) {
@@ -201,7 +201,7 @@ static void vaapi_open(char *device_path, struct vaapi_device *device)
 	device->driver = driver;
 }
 
-static void vaapi_close(struct vaapi_device *device)
+void vaapi_close(struct vaapi_device *device)
 {
 	vaTerminate(device->display);
 	close(device->fd);
@@ -231,7 +231,7 @@ static uint32_t vaapi_check_support(VADisplay display, VAProfile profile,
 	return (rc & VA_RC_CBR || rc & VA_RC_CQP || rc & VA_RC_VBR);
 }
 
-static bool vaapi_supports_h264(VADisplay display)
+bool vaapi_supports_h264(VADisplay display)
 {
 	bool ret = false;
 	ret |= vaapi_check_support(display, VAProfileH264ConstrainedBaseline,
@@ -254,7 +254,7 @@ static bool vaapi_supports_h264(VADisplay display)
 	return ret;
 }
 
-static bool vaapi_supports_av1(VADisplay display)
+bool vaapi_supports_av1(VADisplay display)
 {
 	bool ret = false;
 	// Are there any devices with non-LowPower entrypoints?
@@ -265,7 +265,7 @@ static bool vaapi_supports_av1(VADisplay display)
 	return ret;
 }
 
-static bool vaapi_supports_hevc(VADisplay display)
+bool vaapi_supports_hevc(VADisplay display)
 {
 	bool ret = false;
 	ret |= vaapi_check_support(display, VAProfileHEVCMain,
