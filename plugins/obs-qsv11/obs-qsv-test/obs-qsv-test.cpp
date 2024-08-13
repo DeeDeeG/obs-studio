@@ -60,7 +60,6 @@ static bool get_adapter_caps(IDXGIFactory *factory, mfxLoader loader,
 			     mfxSession m_session, uint32_t adapter_idx)
 {
 	HRESULT hr;
-	static uint32_t idx_adjustment = 0;
 
 	ComPtr<IDXGIAdapter> adapter;
 	hr = factory->EnumAdapters(adapter_idx, &adapter);
@@ -72,18 +71,15 @@ static bool get_adapter_caps(IDXGIFactory *factory, mfxLoader loader,
 
 	uint32_t luid_idx = get_adapter_idx(adapter_idx, desc.AdapterLuid);
 	adapter_caps &caps = adapter_info[luid_idx];
-	if (desc.VendorId != INTEL_VENDOR_ID) {
-		idx_adjustment++;
+	if (desc.VendorId != INTEL_VENDOR_ID)
 		return true;
-	}
 
 	caps.is_intel = true;
 
 	mfxImplDescription *idesc;
-	mfxStatus sts =
-		MFXEnumImplementations(loader, adapter_idx - idx_adjustment,
-				       MFX_IMPLCAPS_IMPLDESCSTRUCTURE,
-				       reinterpret_cast<mfxHDL *>(&idesc));
+	mfxStatus sts = MFXEnumImplementations(
+		loader, adapter_idx, MFX_IMPLCAPS_IMPLDESCSTRUCTURE,
+		reinterpret_cast<mfxHDL *>(&idesc));
 
 	if (sts != MFX_ERR_NONE)
 		return false;
