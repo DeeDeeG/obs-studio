@@ -1420,19 +1420,14 @@ static bool obs_qsv_encode(void *data, struct encoder_frame *frame,
 	return true;
 }
 
-static bool obs_qsv_encode_tex(void *data, struct encoder_texture *tex,
-			       int64_t pts, uint64_t lock_key,
-			       uint64_t *next_key,
+static bool obs_qsv_encode_tex(void *data, uint32_t handle, int64_t pts,
+			       uint64_t lock_key, uint64_t *next_key,
 			       struct encoder_packet *packet,
 			       bool *received_packet)
 {
 	struct obs_qsv *obsqsv = data;
 
-#ifdef _WIN32
-	if (!tex || tex->handle == GS_INVALID_HANDLE) {
-#else
-	if (!tex || !tex->tex[0] || !tex->tex[1]) {
-#endif
+	if (handle == GS_INVALID_HANDLE) {
 		warn("Encode failed: bad texture handle");
 		*next_key = lock_key;
 		return false;
@@ -1455,8 +1450,8 @@ static bool obs_qsv_encode_tex(void *data, struct encoder_texture *tex,
 	if (obs_encoder_has_roi(obsqsv->encoder))
 		obs_qsv_setup_rois(obsqsv);
 
-	ret = qsv_encoder_encode_tex(obsqsv->context, qsvPTS, (void *)tex,
-				     lock_key, next_key, &pBS);
+	ret = qsv_encoder_encode_tex(obsqsv->context, qsvPTS, handle, lock_key,
+				     next_key, &pBS);
 
 	if (ret < 0) {
 		warn("encode failed");
@@ -1485,7 +1480,7 @@ struct obs_encoder_info obs_qsv_encoder_tex = {
 	.destroy = obs_qsv_destroy,
 	.caps = OBS_ENCODER_CAP_DYN_BITRATE | OBS_ENCODER_CAP_PASS_TEXTURE |
 		OBS_ENCODER_CAP_DEPRECATED,
-	.encode_texture2 = obs_qsv_encode_tex,
+	.encode_texture = obs_qsv_encode_tex,
 	.update = obs_qsv_update,
 	.get_properties = obs_qsv_props_h264,
 	.get_defaults = obs_qsv_defaults_h264_v1,
@@ -1521,7 +1516,7 @@ struct obs_encoder_info obs_qsv_encoder_tex_v2 = {
 	.destroy = obs_qsv_destroy,
 	.caps = OBS_ENCODER_CAP_DYN_BITRATE | OBS_ENCODER_CAP_PASS_TEXTURE |
 		OBS_ENCODER_CAP_ROI,
-	.encode_texture2 = obs_qsv_encode_tex,
+	.encode_texture = obs_qsv_encode_tex,
 	.update = obs_qsv_update,
 	.get_properties = obs_qsv_props_h264_v2,
 	.get_defaults = obs_qsv_defaults_h264_v2,
@@ -1557,7 +1552,7 @@ struct obs_encoder_info obs_qsv_av1_encoder_tex = {
 	.destroy = obs_qsv_destroy,
 	.caps = OBS_ENCODER_CAP_DYN_BITRATE | OBS_ENCODER_CAP_PASS_TEXTURE |
 		OBS_ENCODER_CAP_ROI,
-	.encode_texture2 = obs_qsv_encode_tex,
+	.encode_texture = obs_qsv_encode_tex,
 	.update = obs_qsv_update,
 	.get_properties = obs_qsv_props_av1,
 	.get_defaults = obs_qsv_defaults_av1,
@@ -1591,7 +1586,7 @@ struct obs_encoder_info obs_qsv_hevc_encoder_tex = {
 	.destroy = obs_qsv_destroy,
 	.caps = OBS_ENCODER_CAP_DYN_BITRATE | OBS_ENCODER_CAP_PASS_TEXTURE |
 		OBS_ENCODER_CAP_ROI,
-	.encode_texture2 = obs_qsv_encode_tex,
+	.encode_texture = obs_qsv_encode_tex,
 	.update = obs_qsv_update,
 	.get_properties = obs_qsv_props_hevc,
 	.get_defaults = obs_qsv_defaults_hevc,
