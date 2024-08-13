@@ -25,10 +25,9 @@
 mfxStatus Initialize(mfxVersion ver, mfxSession *pSession,
 		     mfxFrameAllocator *pmfxAllocator, mfxHDL *deviceHandle,
 		     bool bCreateSharedHandles, bool dx9hack,
-		     enum qsv_codec codec, void **data)
+		     enum qsv_codec codec)
 {
 	UNUSED_PARAMETER(codec);
-	UNUSED_PARAMETER(data);
 
 	mfxStatus sts = MFX_ERR_NONE;
 	mfxVariant impl;
@@ -175,8 +174,6 @@ void Release()
 	DX9_CleanupHWDevice();
 #endif
 }
-
-void ReleaseSessionData(void *) {}
 
 void mfxGetTime(mfxTime *timestamp)
 {
