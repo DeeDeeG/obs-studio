@@ -56,9 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QSV_Encoder_Internal.h"
 #include "QSV_Encoder.h"
-#include <vpl/mfxstructures.h>
-#include <vpl/mfxvideo++.h>
-#include <vpl/mfxdispatcher.h>
+#include <mfxvideo++.h>
 #include <obs-module.h>
 
 #define do_log(level, format, ...) \
@@ -71,7 +69,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 mfxHDL QSV_Encoder_Internal::g_DX_Handle = NULL;
 mfxU16 QSV_Encoder_Internal::g_numEncodersOpen = 0;
 
-QSV_Encoder_Internal::QSV_Encoder_Internal(mfxVersion &version, bool isDGPU)
+QSV_Encoder_Internal::QSV_Encoder_Internal(mfxIMPL &impl, mfxVersion &version,
+					   bool isDGPU)
 	: m_pmfxSurfaces(NULL),
 	  m_pmfxENC(NULL),
 	  m_nSPSBufferSize(1024),
@@ -83,48 +82,32 @@ QSV_Encoder_Internal::QSV_Encoder_Internal(mfxVersion &version, bool isDGPU)
 	  m_outBitstream(),
 	  m_isDGPU(isDGPU)
 {
-	mfxVariant tempImpl;
+	mfxIMPL tempImpl;
 	mfxStatus sts;
 
-	mfxLoader loader = MFXLoad();
-	mfxConfig cfg = MFXCreateConfig(loader);
-
-	tempImpl.Type = MFX_VARIANT_TYPE_U32;
-	tempImpl.Data.U32 = MFX_IMPL_TYPE_HARDWARE;
-	MFXSetConfigFilterProperty(
-		cfg, (const mfxU8 *)"mfxImplDescription.Impl", tempImpl);
-
-	tempImpl.Type = MFX_VARIANT_TYPE_U32;
-	tempImpl.Data.U32 = INTEL_VENDOR_ID;
-	MFXSetConfigFilterProperty(
-		cfg, (const mfxU8 *)"mfxImplDescription.VendorID", tempImpl);
 #if defined(_WIN32)
 	m_bUseD3D11 = true;
 	m_bD3D9HACK = true;
 	m_bUseTexAlloc = true;
 
-	tempImpl.Type = MFX_VARIANT_TYPE_U32;
-	tempImpl.Data.U32 = MFX_ACCEL_MODE_VIA_D3D11;
-	MFXSetConfigFilterProperty(
-		cfg, (const mfxU8 *)"mfxImplDescription.AccelerationMode",
-		tempImpl);
+	tempImpl = impl | MFX_IMPL_VIA_D3D11;
+	const char *sImpl = "D3D11";
 #else
 	m_bUseTexAlloc = false;
-	tempImpl.Type = MFX_VARIANT_TYPE_U32;
-	tempImpl.Data.U32 = MFX_ACCEL_MODE_VIA_VAAPI;
-	MFXSetConfigFilterProperty(
-		cfg, (const mfxU8 *)"mfxImplDescription.AccelerationMode",
-		tempImpl);
+	tempImpl = impl | MFX_IMPL_VIA_VAAPI;
+	const char *sImpl = "VAAPI";
 #endif
-	sts = MFXCreateSession(loader, 0, &m_session);
+	sts = m_session.Init(tempImpl, &version);
 	if (sts == MFX_ERR_NONE) {
-		MFXQueryVersion(m_session, &version);
-		MFXClose(m_session);
-		MFXUnload(loader);
+		m_session.QueryVersion(&version);
+		m_session.Close();
 
-		blog(LOG_INFO, "\tsurf:           %s",
-		     m_bUseTexAlloc ? "Texture" : "SysMem");
+		blog(LOG_INFO,
+		     "\timpl:           %s\n"
+		     "\tsurf:           %s",
+		     sImpl, m_bUseTexAlloc ? "Texture" : "SysMem");
 
+		m_impl = tempImpl;
 		m_ver = version;
 		return;
 	}
@@ -132,34 +115,16 @@ QSV_Encoder_Internal::QSV_Encoder_Internal(mfxVersion &version, bool isDGPU)
 #if defined(_WIN32)
 	// D3D11 failed at this point.
 	m_bUseD3D11 = false;
-	loader = MFXLoad();
-	cfg = MFXCreateConfig(loader);
-
-	tempImpl.Type = MFX_VARIANT_TYPE_U32;
-	tempImpl.Data.U32 = MFX_IMPL_TYPE_HARDWARE;
-	MFXSetConfigFilterProperty(
-		cfg, (const mfxU8 *)"mfxImplDescription.Impl", tempImpl);
-
-	tempImpl.Type = MFX_VARIANT_TYPE_U32;
-	tempImpl.Data.U32 = INTEL_VENDOR_ID;
-	MFXSetConfigFilterProperty(
-		cfg, (const mfxU8 *)"mfxImplDescription.VendorID", tempImpl);
-
-	tempImpl.Type = MFX_VARIANT_TYPE_U32;
-	tempImpl.Data.U32 = MFX_ACCEL_MODE_VIA_D3D9;
-	MFXSetConfigFilterProperty(
-		cfg, (const mfxU8 *)"mfxImplDescription.AccelerationMode",
-		tempImpl);
-
-	sts = MFXCreateSession(loader, 0, &m_session);
+	tempImpl = impl | MFX_IMPL_VIA_D3D9;
+	sts = m_session.Init(tempImpl, &version);
 	if (sts == MFX_ERR_NONE) {
-		MFXQueryVersion(m_session, &version);
-		MFXClose(m_session);
-		MFXUnload(loader);
+		m_session.QueryVersion(&version);
+		m_session.Close();
 
 		blog(LOG_INFO, "\timpl:           D3D09\n"
 			       "\tsurf:           SysMem");
 
+		m_impl = tempImpl;
 		m_ver = version;
 		m_bUseD3D11 = false;
 	}
@@ -179,16 +144,16 @@ mfxStatus QSV_Encoder_Internal::Open(qsv_param_t *pParams, enum qsv_codec codec)
 #if defined(_WIN32)
 	if (m_bUseD3D11)
 		// Use D3D11 surface
-		sts = Initialize(m_ver, &m_session, &m_mfxAllocator,
+		sts = Initialize(m_impl, m_ver, &m_session, &m_mfxAllocator,
 				 &g_DX_Handle, false, false);
 	else if (m_bD3D9HACK)
 		// Use hack
-		sts = Initialize(m_ver, &m_session, &m_mfxAllocator,
+		sts = Initialize(m_impl, m_ver, &m_session, &m_mfxAllocator,
 				 &g_DX_Handle, false, true);
 	else
-		sts = Initialize(m_ver, &m_session, NULL, NULL, NULL, NULL);
+		sts = Initialize(m_impl, m_ver, &m_session, NULL);
 #else
-	sts = Initialize(m_ver, &m_session, NULL, NULL, false, false);
+	sts = Initialize(m_impl, m_ver, &m_session, NULL, NULL, false, false);
 #endif
 
 	MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
@@ -756,8 +721,8 @@ mfxStatus QSV_Encoder_Internal::Encode(uint64_t ts, uint8_t *pDataY,
 
 	while (MFX_ERR_NOT_FOUND == nTaskIdx || MFX_ERR_NOT_FOUND == nSurfIdx) {
 		// No more free tasks or surfaces, need to sync
-		sts = MFXVideoCORE_SyncOperation(
-			m_session, m_pTaskPool[m_nFirstSyncTask].syncp, 60000);
+		sts = m_session.SyncOperation(
+			m_pTaskPool[m_nFirstSyncTask].syncp, 60000);
 		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
 		mfxU8 *pTemp = m_outBitstream.Data;
@@ -846,8 +811,8 @@ mfxStatus QSV_Encoder_Internal::Encode_tex(uint64_t ts, uint32_t tex_handle,
 
 	while (MFX_ERR_NOT_FOUND == nTaskIdx || MFX_ERR_NOT_FOUND == nSurfIdx) {
 		// No more free tasks or surfaces, need to sync
-		sts = MFXVideoCORE_SyncOperation(
-			m_session, m_pTaskPool[m_nFirstSyncTask].syncp, 60000);
+		sts = m_session.SyncOperation(
+			m_pTaskPool[m_nFirstSyncTask].syncp, 60000);
 		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
 		mfxU8 *pTemp = m_outBitstream.Data;
@@ -904,8 +869,8 @@ mfxStatus QSV_Encoder_Internal::Drain()
 	mfxStatus sts = MFX_ERR_NONE;
 
 	while (m_pTaskPool && m_pTaskPool[m_nFirstSyncTask].syncp) {
-		sts = MFXVideoCORE_SyncOperation(
-			m_session, m_pTaskPool[m_nFirstSyncTask].syncp, 60000);
+		sts = m_session.SyncOperation(
+			m_pTaskPool[m_nFirstSyncTask].syncp, 60000);
 		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
 		m_pTaskPool[m_nFirstSyncTask].syncp = NULL;
@@ -958,7 +923,7 @@ mfxStatus QSV_Encoder_Internal::ClearData()
 		Release();
 		g_DX_Handle = NULL;
 	}
-	MFXVideoENCODE_Close(m_session);
+	m_session.Close();
 	return sts;
 }
 

@@ -5,10 +5,7 @@
 // Most of this file shouldnt be accessed from C.
 #ifdef __cplusplus
 
-#include <vpl/mfxvideo++.h>
-#include <vpl/mfxdispatcher.h>
-
-constexpr inline int INTEL_VENDOR_ID = 0x8086;
+#include <mfxvideo++.h>
 
 // =================================================================
 // OS-specific definitions of types, macro, etc...
@@ -83,7 +80,7 @@ constexpr inline int INTEL_VENDOR_ID = 0x8086;
 #define WILL_WRITE 0x2000
 
 // =================================================================
-// Intel VPL memory allocator entrypoints....
+// Intel Media SDK memory allocator entrypoints....
 // Implementation of this functions is OS/Memory type specific.
 mfxStatus simple_alloc(mfxHDL pthis, mfxFrameAllocRequest *request,
 		       mfxFrameAllocResponse *response);
@@ -95,7 +92,7 @@ mfxStatus simple_copytex(mfxHDL pthis, mfxMemId mid, mfxU32 tex_handle,
 			 mfxU64 lock_key, mfxU64 *next_key);
 
 // =================================================================
-// Utility functions, not directly tied to VPL functionality
+// Utility functions, not directly tied to Media SDK functionality
 //
 
 void PrintErrString(int err, const char *filestr, int line);
@@ -133,10 +130,11 @@ typedef struct {
 // Get free task
 int GetFreeTaskIndex(Task *pTaskPool, mfxU16 nPoolSize);
 
-// Initialize Intel VPL Session, device/display and memory manager
-mfxStatus Initialize(mfxVersion ver, mfxSession *pSession,
-		     mfxFrameAllocator *pmfxAllocator, mfxHDL *deviceHandle,
-		     bool bCreateSharedHandles, bool dx9hack); //vpl change
+// Initialize Intel Media SDK Session, device/display and memory manager
+mfxStatus Initialize(mfxIMPL impl, mfxVersion ver, MFXVideoSession *pSession,
+		     mfxFrameAllocator *pmfxAllocator,
+		     mfxHDL *deviceHandle = NULL,
+		     bool bCreateSharedHandles = false, bool dx9hack = false);
 
 // Release resources (device/display)
 void Release();
