@@ -395,10 +395,7 @@ static bool av1_supported(void)
 	bool av1_supported = false;
 	config_t *config = NULL;
 
-	dstr_init_move_array(&cmd, test_exe);
-	dstr_insert_ch(&cmd, 0, '\"');
-	dstr_cat(&cmd, "\"");
-
+	dstr_copy(&cmd, test_exe);
 	enum_graphics_device_luids(enum_luids, &cmd);
 
 	os_process_pipe_t *pp = os_process_pipe_create(cmd.array, "r");
@@ -451,6 +448,8 @@ fail:
 		config_close(config);
 	dstr_free(&caps_str);
 	dstr_free(&cmd);
+	if (test_exe)
+		bfree(test_exe);
 
 	return av1_supported;
 }
