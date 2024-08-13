@@ -257,7 +257,10 @@ mfxStatus QSV_Encoder_Internal::InitParams(qsv_param_t *pParams,
 	m_mfxEncParams.mfx.FrameInfo.CropY = 0;
 	m_mfxEncParams.mfx.FrameInfo.CropW = pParams->nWidth;
 	m_mfxEncParams.mfx.FrameInfo.CropH = pParams->nHeight;
-	m_mfxEncParams.mfx.GopRefDist = pParams->nbFrames + 1;
+	if (codec == QSV_CODEC_AV1)
+		m_mfxEncParams.mfx.GopRefDist = 1;
+	else
+		m_mfxEncParams.mfx.GopRefDist = pParams->nbFrames + 1;
 
 	if (codec == QSV_CODEC_HEVC)
 		m_mfxEncParams.mfx.LowPower = MFX_CODINGOPTION_OFF;
