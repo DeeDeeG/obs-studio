@@ -77,11 +77,9 @@ void qsv_encoder_version(unsigned short *major, unsigned short *minor)
 	*minor = ver.Minor;
 }
 
-qsv_t *qsv_encoder_open(qsv_param_t *pParams, enum qsv_codec codec,
-			bool useTexAlloc)
+qsv_t *qsv_encoder_open(qsv_param_t *pParams, enum qsv_codec codec)
 {
-	QSV_Encoder_Internal *pEncoder =
-		new QSV_Encoder_Internal(ver, useTexAlloc);
+	QSV_Encoder_Internal *pEncoder = new QSV_Encoder_Internal(ver);
 	mfxStatus sts = pEncoder->Open(pParams, codec);
 	if (sts != MFX_ERR_NONE) {
 
