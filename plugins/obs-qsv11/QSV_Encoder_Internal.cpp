@@ -180,16 +180,15 @@ mfxStatus QSV_Encoder_Internal::Open(qsv_param_t *pParams, enum qsv_codec codec)
 	if (m_bUseD3D11)
 		// Use D3D11 surface
 		sts = Initialize(m_ver, &m_session, &m_mfxAllocator,
-				 &g_DX_Handle, false, false, codec);
+				 &g_DX_Handle, false, false);
 	else if (m_bD3D9HACK)
 		// Use hack
 		sts = Initialize(m_ver, &m_session, &m_mfxAllocator,
-				 &g_DX_Handle, false, true, codec);
+				 &g_DX_Handle, false, true);
 	else
-		sts = Initialize(m_ver, &m_session, NULL, NULL, NULL, NULL,
-				 codec);
+		sts = Initialize(m_ver, &m_session, NULL, NULL, NULL, NULL);
 #else
-	sts = Initialize(m_ver, &m_session, NULL, NULL, false, false, codec);
+	sts = Initialize(m_ver, &m_session, NULL, NULL, false, false);
 #endif
 
 	MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
