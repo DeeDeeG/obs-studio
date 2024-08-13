@@ -5,24 +5,23 @@ add_library(OBS::dal-plugin ALIAS obs-dal-plugin)
 
 target_sources(
   obs-dal-plugin
-  PRIVATE # cmake-format: sortable
-          CMSampleBufferUtils.h
-          CMSampleBufferUtils.mm
-          Defines.h
-          Logging.h
-          OBSDALDevice.h
-          OBSDALDevice.mm
-          OBSDALMachClient.h
-          OBSDALMachClient.mm
-          OBSDALObjectStore.h
-          OBSDALObjectStore.mm
+  PRIVATE OBSDALPlugIn.mm
           OBSDALPlugIn.h
-          OBSDALPlugIn.mm
-          OBSDALPlugInInterface.h
-          OBSDALPlugInInterface.mm
           OBSDALPlugInMain.mm
+          OBSDALPlugInInterface.mm
+          OBSDALPlugInInterface.h
+          OBSDALObjectStore.mm
+          OBSDALObjectStore.h
+          OBSDALDevice.mm
+          OBSDALDevice.h
+          OBSDALMachClient.mm
+          OBSDALMachClient.h
+          CMSampleBufferUtils.mm
+          OBSDALStream.mm
           OBSDALStream.h
-          OBSDALStream.mm)
+          CMSampleBufferUtils.h
+          Defines.h
+          Logging.h)
 
 set(_placeholder_location "${CMAKE_CURRENT_SOURCE_DIR}/../common/data/placeholder.png")
 

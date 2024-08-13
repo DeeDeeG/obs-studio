@@ -57,18 +57,11 @@ if(OBS_CMAKE_VERSION VERSION_GREATER_EQUAL 3.0.0)
   add_library(_virtualcam INTERFACE)
 
   configure_file(cmake/windows/obs-module.rc.in virtualcam-module.rc)
-  target_sources(
-    _virtualcam
-    INTERFACE # cmake-format: sortable
-              ${CMAKE_CURRENT_BINARY_DIR}/virtualcam-module.rc
-              placeholder.cpp
-              sleepto.c
-              sleepto.h
-              virtualcam-filter.cpp
-              virtualcam-filter.hpp
-              virtualcam-module.cpp)
+  target_sources(_virtualcam INTERFACE placeholder.cpp sleepto.c sleepto.h virtualcam-filter.cpp virtualcam-filter.hpp
+                                       virtualcam-module.cpp)
   target_include_directories(_virtualcam INTERFACE "${CMAKE_CURRENT_BINARY_DIR}")
   target_compile_definitions(_virtualcam INTERFACE VIRTUALCAM_AVAILABLE)
+  target_compile_options(_virtualcam INTERFACE $<IF:$<CONFIG:Debug>,/MTd,/MT>)
 
   target_link_libraries(
     _virtualcam
