@@ -23,7 +23,6 @@ struct adapter_info {
 #define MAX_ADAPTERS 10
 extern struct adapter_info adapters[MAX_ADAPTERS];
 extern size_t adapter_count;
-extern size_t adapter_index;
 
 void util_cpuid(int cpuinfo[4], int flags);
 void check_adapters(struct adapter_info *adapters, size_t *adapter_count);
@@ -163,7 +162,7 @@ int GetFreeTaskIndex(Task *pTaskPool, mfxU16 nPoolSize);
 mfxStatus Initialize(mfxVersion ver, mfxSession *pSession,
 		     mfxFrameAllocator *pmfxAllocator, mfxHDL *deviceHandle,
 		     bool bCreateSharedHandles, enum qsv_codec codec,
-		     void **data);
+		     void **data); //vpl change
 
 // Release global shared resources (device/display)
 void Release();
