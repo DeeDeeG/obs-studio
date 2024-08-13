@@ -195,7 +195,9 @@ mfxStatus QSV_Encoder_Internal::Open(qsv_param_t *pParams, enum qsv_codec codec)
 
 	m_pmfxENC = new MFXVideoENCODE(m_session);
 
-	InitParams(pParams, codec);
+	sts = InitParams(pParams, codec);
+	MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+
 	sts = m_pmfxENC->Query(&m_mfxEncParams, &m_mfxEncParams);
 	MSDK_IGNORE_MFX_STS(sts, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
 	MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
