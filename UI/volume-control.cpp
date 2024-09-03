@@ -1115,14 +1115,14 @@ void VolumeMeter::paintHMeter(QPainter &painter, int x, int y, int width, int he
 		peakPosition = maximumPosition;
 	}
 
-	if (peakPosition < minimumPosition) {
+	if (peak < minimumLevel) {
 		painter.fillRect(minimumPosition, y, nominalLength, height,
 				 muted ? backgroundNominalColorDisabled : backgroundNominalColor);
 		painter.fillRect(warningPosition, y, warningLength, height,
 				 muted ? backgroundWarningColorDisabled : backgroundWarningColor);
 		painter.fillRect(errorPosition, y, errorLength, height,
 				 muted ? backgroundErrorColorDisabled : backgroundErrorColor);
-	} else if (peakPosition < warningPosition) {
+	} else if (peak < warningLevel) {
 		painter.fillRect(minimumPosition, y, peakPosition - minimumPosition, height,
 				 muted ? foregroundNominalColorDisabled : foregroundNominalColor);
 		painter.fillRect(peakPosition, y, warningPosition - peakPosition, height,
@@ -1131,7 +1131,7 @@ void VolumeMeter::paintHMeter(QPainter &painter, int x, int y, int width, int he
 				 muted ? backgroundWarningColorDisabled : backgroundWarningColor);
 		painter.fillRect(errorPosition, y, errorLength, height,
 				 muted ? backgroundErrorColorDisabled : backgroundErrorColor);
-	} else if (peakPosition < errorPosition) {
+	} else if (peak < errorLevel) {
 		painter.fillRect(minimumPosition, y, nominalLength, height,
 				 muted ? foregroundNominalColorDisabled : foregroundNominalColor);
 		painter.fillRect(warningPosition, y, peakPosition - warningPosition, height,
@@ -1140,7 +1140,7 @@ void VolumeMeter::paintHMeter(QPainter &painter, int x, int y, int width, int he
 				 muted ? backgroundWarningColorDisabled : backgroundWarningColor);
 		painter.fillRect(errorPosition, y, errorLength, height,
 				 muted ? backgroundErrorColorDisabled : backgroundErrorColor);
-	} else if (peakPosition < maximumPosition) {
+	} else if (peak <= clipLevel) {
 		painter.fillRect(minimumPosition, y, nominalLength, height,
 				 muted ? foregroundNominalColorDisabled : foregroundNominalColor);
 		painter.fillRect(warningPosition, y, warningLength, height,
@@ -1199,14 +1199,14 @@ void VolumeMeter::paintVMeter(QPainter &painter, int x, int y, int width, int he
 		peakPosition = maximumPosition;
 	}
 
-	if (peakPosition < minimumPosition) {
+	if (peak < minimumLevel) {
 		painter.fillRect(x, minimumPosition, width, nominalLength,
 				 muted ? backgroundNominalColorDisabled : backgroundNominalColor);
 		painter.fillRect(x, warningPosition, width, warningLength,
 				 muted ? backgroundWarningColorDisabled : backgroundWarningColor);
 		painter.fillRect(x, errorPosition, width, errorLength,
 				 muted ? backgroundErrorColorDisabled : backgroundErrorColor);
-	} else if (peakPosition < warningPosition) {
+	} else if (peak < warningLevel) {
 		painter.fillRect(x, minimumPosition, width, peakPosition - minimumPosition,
 				 muted ? foregroundNominalColorDisabled : foregroundNominalColor);
 		painter.fillRect(x, peakPosition, width, warningPosition - peakPosition,
@@ -1215,7 +1215,7 @@ void VolumeMeter::paintVMeter(QPainter &painter, int x, int y, int width, int he
 				 muted ? backgroundWarningColorDisabled : backgroundWarningColor);
 		painter.fillRect(x, errorPosition, width, errorLength,
 				 muted ? backgroundErrorColorDisabled : backgroundErrorColor);
-	} else if (peakPosition < errorPosition) {
+	} else if (peak < errorLevel) {
 		painter.fillRect(x, minimumPosition, width, nominalLength,
 				 muted ? foregroundNominalColorDisabled : foregroundNominalColor);
 		painter.fillRect(x, warningPosition, width, peakPosition - warningPosition,
@@ -1224,7 +1224,7 @@ void VolumeMeter::paintVMeter(QPainter &painter, int x, int y, int width, int he
 				 muted ? backgroundWarningColorDisabled : backgroundWarningColor);
 		painter.fillRect(x, errorPosition, width, errorLength,
 				 muted ? backgroundErrorColorDisabled : backgroundErrorColor);
-	} else if (peakPosition < maximumPosition) {
+	} else if (peak <= clipLevel) {
 		painter.fillRect(x, minimumPosition, width, nominalLength,
 				 muted ? foregroundNominalColorDisabled : foregroundNominalColor);
 		painter.fillRect(x, warningPosition, width, warningLength,
