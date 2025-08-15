@@ -85,7 +85,7 @@ jobs:
           echo "NPROC=$(sysctl -n hw.ncpu)" >> $GITHUB_ENV
       - name: 'Restore Chromium Embedded Framework from cache'
         id: cef-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'cef-cache'
         with:
@@ -93,7 +93,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.MACOS_CEF_BUILD_VERSION }}
       - name: 'Restore VLC dependency from cache'
         id: vlc-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'vlc-cache'
         with:
@@ -101,7 +101,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.VLC_VERSION }}
       - name: 'Restore Sparkle dependency from cache'
         id: sparkle-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'sparkle-cache'
         with:
@@ -445,7 +445,7 @@ jobs:
            libpci-dev
       - name: 'Restore Chromium Embedded Framework from cache'
         id: cef-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'cef-cache'
         with:
@@ -529,7 +529,7 @@ jobs:
           fi
       - name: 'Restore QT dependency from cache'
         id: qt-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'windows-qt-cache'
         with:
@@ -537,7 +537,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.QT_VERSION }}
       - name: 'Restore pre-built dependencies from cache'
         id: deps-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'windows-deps-cache'
         with:
@@ -545,7 +545,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.WINDOWS_DEPS_VERSION }}-${{ env.WINDOWS_DEPS_CACHE_VERSION }}
       - name: 'Restore VLC dependency from cache'
         id: vlc-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'windows-vlc-cache'
         with:
@@ -553,7 +553,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.VLC_VERSION }}
       - name: 'Restore CEF dependency from cache (64 bit)'
         id: cef-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'windows-cef-64-cache'
         with:
@@ -638,7 +638,7 @@ jobs:
           fi
       - name: 'Restore QT dependency from cache'
         id: qt-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'qt-cache'
         with:
@@ -646,7 +646,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.QT_VERSION }}
       - name: 'Restore pre-built dependencies from cache'
         id: deps-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'deps-cache'
         with:
@@ -654,7 +654,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.WINDOWS_DEPS_VERSION }}-${{ env.WINDOWS_DEPS_CACHE_VERSION }}
       - name: 'Restore VLC dependency from cache'
         id: vlc-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'vlc-cache'
         with:
@@ -662,7 +662,7 @@ jobs:
           key: ${{ runner.os }}-pr-${{ env.CACHE_NAME }}-${{ env.WINDOWS_VLC_VERSION }}
       - name: 'Restore CEF dependency from cache (32 bit)'
         id: cef-cache
-        uses: actions/cache@v2.1.2
+        uses: actions/cache@v3
         env:
           CACHE_NAME: 'cef-32-cache'
         with:
